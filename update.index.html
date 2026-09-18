@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>مكتب علام للعقارات | إدارة أ.محمود علام _ المحلة الكبرى</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: "#111827",
+                            slate: "#1f2937",
+                            gold: "#c08435",
+                            bg: "#f8fafc"
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ["Cairo", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Cairo", sans-serif;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .loading {
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            direction: ltr;
+        }
+
+        /*
+         * المساحة البيضاء التي تظهر عند عدم وجود صورة.
+         * لا تحتوي على أيقونة أو صورة بديلة.
+         */
+        .no-image-area {
+            height: 240px;
+            background: #ffffff;
+        }
+
+        .modal-backdrop {
+            background: rgba(15, 23, 42, .72);
+        }
+
+        .property-card {
+            min-height: 650px;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-bg text-brand-dark antialiased pb-20 md:pb-0">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-dark to-brand-slate flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-city text-amber-400 text-xl"></i>
+                </div>
+
+                <div>
+                    <span class="text-lg sm:text-xl font-extrabold text-brand-dark block">
+                        مكتب علام للعقارات
+                    </span>
+
+                    <span class="text-[10px] sm:text-xs text-slate-500">
+                        إدارة أ.محمود علام _ المحلة الكبرى
+                    </span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-7 font-bold text-slate-600">
+
+                <a href="#properties" class="hover:text-amber-600 transition">
+                    العقارات
+                </a>
+
+                <a href="#contact" class="hover:text-amber-600 transition">
+                    اتصل بنا
+                </a>
+
+                <button onclick="openFavoritesModal()"
+                        class="relative hover:text-red-500 transition">
+                    <i class="fa-solid fa-heart text-red-500 ml-1"></i>
+                    المفضلة
+
+                    <span id="desktopFavoritesCount"
+                          class="absolute -top-3 -left-4 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
+                        0
+                    </span>
+                </button>
+
+            </nav>
+
+            <a href="https://wa.me/201282597010?text=مرحباً، أهتم بالاستفسار عن العقارات المعروضة لديكم في مكتب علام."
+               target="_blank"
+               rel="noopener noreferrer"
+               class="hidden sm:inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                01282597010
+            </a>
+
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative bg-gradient-to-b from-slate-700 to-slate-950 text-white py-20 lg:py-28 overflow-hidden">
+
+        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+        <div class="relative max-w-5xl mx-auto px-4 text-center">
+
+            <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-4 py-2 rounded-full text-amber-300 text-sm font-semibold mb-6">
+                <span class="flex text-amber-400 gap-0.5">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </span>
+
+                <span>4.7/5 بناءً على مراجعات العملاء</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+                ابحث عن عقارك المثالي في
+                <span class="text-amber-400">المحلة الكبرى</span>
+            </h1>
+
+            <p class="text-lg sm:text-xl text-slate-300">
+مع مكتب الأستاذ محمود علام - أمانة، مصداقية، وخبرة واسعة في تسويق الشقق، الأراضي، والمحلات التجارية.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- Search -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10 mb-16">
+
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8">
+
+            <div class="flex flex-wrap gap-2 pb-6 border-b border-slate-100 mb-6">
+
+                <button id="tab-all"
+                        onclick="setCategory('all')"
+                        class="category-tab px-5 py-2.5 rounded-xl font-bold text-sm bg-brand-dark text-white">
+                    الكل
+                </button>
+
+                <button id="tab-sale"
+                        onclick="setCategory('sale')"
+                        class="category-tab px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-100 text-slate-600">
+                    للبيع
+                </button>
+
+                <button id="tab-rent"
+                        onclick="setCategory('rent')"
+                        class="category-tab px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-100 text-slate-600">
+                    للإيجار
+                </button>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-2">
+                        البحث بالكود أو المكان أو العنوان
+                    </label>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-slate-400"></i>
+
+                        <input id="searchInput"
+                               type="search"
+                               oninput="filterProperties()"
+                               placeholder="مثال: P002 أو الشعبية"
+                               class="w-full pr-11 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-2">
+                        نوع العقار
+                    </label>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-building absolute right-4 top-3.5 text-slate-400"></i>
+
+                        <select id="typeSelect"
+                                onchange="filterProperties()"
+                                class="w-full pr-11 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500">
+
+                            <option value="">جميع أنواع العقارات</option>
+                            <option value="شقة سكنية">شقة سكنية</option>
+                            <option value="شقة إدارية">شقة إدارية</option>
+                            <option value="محل تجاري">محل تجاري</option>
+                            <option value="أرض">أرض</option>
+                            <option value="مصنع / هنجر / مخزن">مصنع / هنجر / مخزن</option>
+                            <option value="منزل">منزل</option>
+
+                        </select>
+
+                        <i class="fa-solid fa-chevron-down absolute left-4 top-4 text-xs text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+
+                        <label id="priceLabel" class="text-xs font-bold text-slate-500">
+                            أقصى سعر للبيع
+                        </label>
+
+                        <span id="priceValue" class="text-xs font-bold text-amber-600">
+                            50,000,000 ج.م
+                        </span>
+
+                    </div>
+
+                    <input id="priceRange"
+                           type="range"
+                           min="100000"
+                           max="50000000"
+                           value="50000000"
+                           step="500000"
+                           oninput="handlePriceInput()"
+                           class="w-full accent-amber-600">
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Properties -->
+    <section id="properties"
+             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+
+        <div class="flex justify-between items-end mb-8">
+
+            <div>
+                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full inline-block mb-2">
+                    العقارات المتاحة
+                </span>
+
+                <h2 class="text-2xl sm:text-3xl font-extrabold">
+                    أحدث عروض مكتب علام
+                </h2>
+            </div>
+
+            <div id="resultsCount"
+                 class="hidden sm:block text-sm text-slate-500 font-medium">
+                جاري التحميل...
+            </div>
+
+        </div>
+
+        <div id="propertiesGrid"
+             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="loading col-span-full">
+                <i class="fa-solid fa-spinner fa-spin text-amber-600 text-2xl ml-3"></i>
+                جاري تحميل العقارات...
+            </div>
+
+        </div>
+
+        <div id="noResults"
+             class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100">
+
+            <i class="fa-solid fa-house-circle-xmark text-4xl text-slate-300 mb-4"></i>
+
+            <h3 class="text-lg font-bold text-slate-700 mb-2">
+                لا توجد عقارات مطابقة
+            </h3>
+
+            <p class="text-sm text-slate-500">
+                جربي تغيير البحث أو نطاق السعر.
+            </p>
+
+        </div>
+
+        <div id="loadError"
+             class="hidden text-center py-16 bg-red-50 text-red-700 rounded-3xl">
+            حدث خطأ أثناء تحميل العقارات.
+        </div>
+
+    </section>
+
+    <!-- Contact -->
+    <section id="contact"
+             class="bg-white py-20 border-t border-slate-100">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="text-center max-w-3xl mx-auto mb-12">
+
+                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full inline-block mb-3">
+                    تواصل معنا
+                </span>
+
+                <h2 class="text-3xl font-extrabold mb-4">
+                    مكتب علام للعقارات في خدمتك دائماً
+                </h2>
+
+                <p class="text-slate-600 leading-8">
+                    المحلة الكبرى ، شكري القوتلي ، شارع تومة ، جنب لطفي للأحذية
+                </p>
+
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+                <form onsubmit="handleContactSubmit(event)"
+                      class="bg-brand-bg p-7 sm:p-10 rounded-3xl border border-slate-100">
+
+                    <h3 class="text-xl font-bold mb-6">
+                        أرسل استفسارك مباشرة
+                    </h3>
+
+                    <div class="space-y-5">
+
+                        <input id="contactName"
+                               required
+                               placeholder="الاسم الكريم"
+                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm">
+
+                        <input id="contactPhone"
+                               required
+                               type="tel"
+                               placeholder="رقم الهاتف"
+                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm">
+
+                        <textarea id="contactMessage"
+                                  required
+                                  rows="4"
+                                  placeholder="اكتب استفسارك..."
+                                  class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm"></textarea>
+
+                        <button class="w-full bg-brand-dark hover:bg-slate-700 text-white py-3.5 rounded-xl font-bold">
+                            إرسال عبر الواتساب
+                        </button>
+
+                    </div>
+                </form>
+
+                <div class="space-y-5">
+
+                    <div class="bg-brand-bg p-6 rounded-2xl border border-slate-100">
+                        <h4 class="font-bold text-slate-500 mb-2">
+                            أرقام التواصل
+                        </h4>
+
+                        <div class="flex flex-col gap-2" dir="ltr">
+                            <a href="tel:01282597010" class="font-extrabold">
+                                01282597010
+                            </a>
+
+                            <a href="tel:01066008110" class="font-extrabold">
+                                01066008110
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-bg p-6 rounded-2xl border border-slate-100">
+                        <h4 class="font-bold text-slate-500 mb-2">
+                            العنوان
+                        </h4>
+
+                        <p class="font-bold leading-8">
+                            المحلة الكبرى ، شكري القوتلي ، شارع تومة ، جنب لطفي للأحذية
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Google Map -->
+            <div class="mt-14">
+
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-extrabold mb-2">
+                        موقع المكتب
+                    </h3>
+
+                    <p class="text-sm text-slate-600">
+                        المحلة الكبرى ، شكري القوتلي ، شارع تومة ، جنب لطفي للأحذية
+                    </p>
+                </div>
+
+                <div class="w-full h-80 sm:h-96 rounded-3xl overflow-hidden shadow-lg border border-slate-200">
+
+                    <iframe
+                        title="موقع مكتب علام للعقارات"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d54629.58983944682!2d31.1444391!3d30.9705555!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f7d6a50e5e0947%3A0x8e8334863c5e032f!2zⵜⵍⵎⵃⵍⵜ%20ⴰⵍⴽⵓⴱⵔⴰ%2C%20El%20Mahalla%20El%20Kubra%2C%20Gharbia%20Governorate%2C%20Egypt!5e0!3m2!1sen!2seg!4v1650000000000!5m2!1sen!2seg"
+                        width="100%"
+                        height="100%"
+                        style="border:0"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+
+                </div>
+
+                <a href="https://www.google.com/maps/search/?api=1&query=مكتب علام للعقارات المحلة الكبرى شكري القوتلي شارع تومة"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="mt-5 mx-auto w-fit flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold text-sm">
+                    <i class="fa-solid fa-location-arrow"></i>
+                    فتح الموقع في خرائط جوجل
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-slate-400 py-10 text-center">
+
+        <div class="text-white font-bold text-lg mb-2">
+            مكتب علام للعقارات - المحلة الكبرى
+        </div>
+
+        <p class="text-xs text-slate-500">
+            جميع الحقوق محفوظة © 2026 |
+            البريد: allamestate1@gmail.com
+        </p>
+
+    </footer>
+
+    <!-- Mobile bottom bar -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-3 flex md:hidden gap-2 shadow-lg">
+
+        <a href="tel:01282597010"
+           class="flex-1 bg-brand-dark text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+            <i class="fa-solid fa-phone text-amber-400"></i>
+            اتصال
+        </a>
+
+        <button onclick="openFavoritesModal()"
+                class="flex-1 bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 relative">
+            <i class="fa-solid fa-heart"></i>
+            المفضلة
+
+            <span id="mobileFavoritesCount"
+                  class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                0
+            </span>
+        </button>
+
+        <a href="https://wa.me/201282597010"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp"></i>
+            واتساب
+        </a>
+
+    </div>
+
+    <!-- Favorites Modal -->
+    <div id="favoritesModal"
+         class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
+
+        <div class="bg-white w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl p-6 shadow-2xl">
+
+            <div class="flex items-center justify-between border-b pb-4 mb-5">
+
+                <h3 class="text-xl font-extrabold">
+                    <i class="fa-solid fa-heart text-red-500 ml-2"></i>
+                    المفضلة
+                </h3>
+
+                <button onclick="closeFavoritesModal()"
+                        class="text-slate-400 hover:text-slate-700 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <div id="favoritesList"></div>
+
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL =
+            "https://pqralzsrhiizmjwzrnwb.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_VeFVHO_UC_BynC1J-WONiA_tGk3gPnM";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+        const primaryPhone =
+            "201282597010";
+
+        const saleMaxPrice =
+            50000000;
+
+        const rentMaxPrice =
+            100000;
+
+        let allProperties = [];
+        let currentCategory = "all";
+
+        let favoriteIds = [];
+
+        try {
+            favoriteIds =
+                JSON.parse(
+                    localStorage.getItem("allam_favorites") || "[]"
+                ).map(String);
+        } catch {
+            favoriteIds = [];
+        }
+
+        const typeAliases = {
+            "مصانع ومخازن": "مصنع / هنجر / مخزن",
+            "مصنع/مخزن": "مصنع / هنجر / مخزن",
+            "مصنع / مخزن": "مصنع / هنجر / مخزن",
+            "مصنع / هنجر / مخزن": "مصنع / هنجر / مخزن"
+        };
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function normalizeType(value) {
+            const type =
+                String(value || "").trim();
+
+            return typeAliases[type] || type;
+        }
+
+        function getPropertyId(property) {
+            return String(
+                property.property_id ||
+                property.id ||
+                property.property_code
+            );
+        }
+
+        function getTitle(property) {
+            return property.title_ar ||
+                `${property.property_type || "عقار"} في ${property.location || ""}`;
+        }
+
+        function getCategory(property) {
+            const status =
+                String(property.status || "");
+
+            if (
+                status.includes("إيجار") ||
+                status.includes("تأجير")
+            ) {
+                return "rent";
+            }
+
+            return "sale";
+        }
+
+        function getImages(property) {
+            if (!property.images) {
+                return [];
+            }
+
+            if (Array.isArray(property.images)) {
+                return property.images
+                    .map(image => String(image).trim())
+                    .filter(Boolean);
+            }
+
+            return String(property.images)
+                .split(",")
+                .map(image => image.trim())
+                .filter(Boolean);
+        }
+
+        function getPriceNumber(property) {
+            const price =
+                Number(property.price);
+
+            return Number.isFinite(price) &&
+                price > 0
+                ? price
+                : 0;
+        }
+
+        function formatPrice(property) {
+            if (
+                property.price === null ||
+                property.price === undefined ||
+                property.price === ""
+            ) {
+                return "السعر عند التواصل";
+            }
+
+            const amount =
+                Number(property.price)
+                    .toLocaleString("ar-EG");
+
+            let unit =
+                "ج.م";
+
+            if (property.price_type === "meter") {
+                unit = "ج.م / م²";
+            } else if (property.price_type === "monthly") {
+                unit = "ج.م / شهرياً";
+            } else if (property.price_type === "yearly") {
+                unit = "ج.م / سنوياً";
+            }
+
+            return `${amount} ${unit}`;
+        }
+
+        function updateFavoriteCounters() {
+            const count =
+                favoriteIds.length;
+
+            document.getElementById(
+                "desktopFavoritesCount"
+            ).textContent = count;
+
+            document.getElementById(
+                "mobileFavoritesCount"
+            ).textContent = count;
+        }
+
+        function isFavorite(property) {
+            return favoriteIds.includes(
+                getPropertyId(property)
+            );
+        }
+
+        function toggleFavorite(propertyId) {
+            const id =
+                String(propertyId);
+
+            const index =
+                favoriteIds.indexOf(id);
+
+            if (index >= 0) {
+                favoriteIds.splice(index, 1);
+            } else {
+                favoriteIds.push(id);
+            }
+
+            localStorage.setItem(
+                "allam_favorites",
+                JSON.stringify(favoriteIds)
+            );
+
+            updateFavoriteCounters();
+            filterProperties();
+
+            const modal =
+                document.getElementById("favoritesModal");
+
+            if (!modal.classList.contains("hidden")) {
+                renderFavorites();
+            }
+        }
+
+        function openFavoritesModal() {
+            renderFavorites();
+
+            const modal =
+                document.getElementById("favoritesModal");
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeFavoritesModal() {
+            const modal =
+                document.getElementById("favoritesModal");
+
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function renderFavorites() {
+            const container =
+                document.getElementById("favoritesList");
+
+            const favorites =
+                allProperties.filter(property =>
+                    favoriteIds.includes(
+                        getPropertyId(property)
+                    )
+                );
+
+            if (!favorites.length) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-regular fa-heart text-5xl text-slate-300 mb-4"></i>
+
+                        <h4 class="font-bold">
+                            لا توجد عقارات في المفضلة
+                        </h4>
+
+                        <p class="text-sm mt-2">
+                            اضغطي على أيقونة القلب لإضافة عقار.
+                        </p>
+                    </div>
+                `;
+
+                return;
+            }
+
+            container.innerHTML =
+                favorites.map(property => {
+                    const title =
+                        getTitle(property);
+
+                    const id =
+                        getPropertyId(property);
+
+                    const message =
+                        encodeURIComponent(
+                            `مرحباً مكتب علام، أهتم بالعقار ${property.property_code || ""}: ${title}`
+                        );
+
+                    return `
+                        <div class="flex items-center justify-between gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-3">
+
+                            <div>
+                                <span class="text-xs font-bold text-amber-600">
+                                    ${escapeHTML(property.property_code || "")}
+                                </span>
+
+                                <h4 class="font-bold text-sm mt-1">
+                                    ${escapeHTML(title)}
+                                </h4>
+
+                                <p class="text-xs text-slate-500 mt-1">
+                                    ${escapeHTML(property.location || "")}
+                                </p>
+
+                                <p class="font-extrabold text-sm mt-1">
+                                    ${formatPrice(property)}
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+
+                                <a href="https://wa.me/${primaryPhone}?text=${message}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="bg-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-bold">
+                                    واتساب
+                                </a>
+
+                                <button onclick="toggleFavorite('${escapeHTML(id)}')"
+                                        class="text-red-500 p-2"
+                                        title="إزالة من المفضلة">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+        }
+
+        function setPriceSettings(category) {
+            const range =
+                document.getElementById("priceRange");
+
+            if (category === "rent") {
+                range.min = 2000;
+                range.max = rentMaxPrice;
+                range.value = rentMaxPrice;
+                range.step = 1000;
+
+                document.getElementById(
+                    "priceLabel"
+                ).textContent =
+                    "أقصى سعر للإيجار شهرياً";
+            } else {
+                range.min = 100000;
+                range.max = saleMaxPrice;
+                range.value = saleMaxPrice;
+                range.step = 500000;
+
+                document.getElementById(
+                    "priceLabel"
+                ).textContent =
+                    "أقصى سعر للبيع";
+            }
+
+            updatePriceLabel();
+        }
+
+        function updatePriceLabel() {
+            const value =
+                Number(
+                    document.getElementById(
+                        "priceRange"
+                    ).value
+                );
+
+            document.getElementById(
+                "priceValue"
+            ).textContent =
+                `${value.toLocaleString("ar-EG")} ج.م`;
+        }
+
+        function handlePriceInput() {
+            const range =
+                document.getElementById("priceRange");
+
+            const value =
+                Number(range.value);
+
+            if (currentCategory === "rent") {
+                range.step = 1000;
+            } else if (value < 500000) {
+                range.step = 100000;
+            } else {
+                range.step = 500000;
+            }
+
+            updatePriceLabel();
+            filterProperties();
+        }
+
+        function setCategory(category) {
+            currentCategory =
+                category;
+
+            document.querySelectorAll(
+                ".category-tab"
+            ).forEach(button => {
+                button.className =
+                    "category-tab px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-100 text-slate-600";
+            });
+
+            const activeButton =
+                document.getElementById(
+                    `tab-${category}`
+                );
+
+            if (activeButton) {
+                activeButton.className =
+                    "category-tab px-5 py-2.5 rounded-xl font-bold text-sm bg-brand-dark text-white";
+            }
+
+            setPriceSettings(category);
+            filterProperties();
+        }
+
+        async function loadProperties() {
+            const grid =
+                document.getElementById(
+                    "propertiesGrid"
+                );
+
+            const errorBox =
+                document.getElementById(
+                    "loadError"
+                );
+
+            errorBox.classList.add("hidden");
+
+            grid.innerHTML = `
+                <div class="loading col-span-full">
+                    <i class="fa-solid fa-spinner fa-spin text-amber-600 text-2xl ml-3"></i>
+                    جاري تحميل العقارات...
+                </div>
+            `;
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("properties")
+                .select("*")
+                .order(
+                    "updated_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+            if (error) {
+                console.error(
+                    "Supabase error:",
+                    error
+                );
+
+                grid.innerHTML = "";
+                errorBox.classList.remove("hidden");
+
+                return;
+            }
+
+            allProperties =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+            updateFavoriteCounters();
+            filterProperties();
+        }
+
+        function filterProperties() {
+            const search =
+                document.getElementById(
+                    "searchInput"
+                ).value
+                    .toLowerCase()
+                    .trim();
+
+            const selectedType =
+                document.getElementById(
+                    "typeSelect"
+                ).value;
+
+            const maxPrice =
+                Number(
+                    document.getElementById(
+                        "priceRange"
+                    ).value
+                );
+
+            const filtered =
+                allProperties.filter(property => {
+                    const categoryMatch =
+                        currentCategory === "all" ||
+                        getCategory(property) === currentCategory;
+
+                    const typeMatch =
+                        !selectedType ||
+                        normalizeType(
+                            property.property_type
+                        ) === selectedType;
+
+                    const searchableText = [
+                        property.property_code,
+                        property.title_ar,
+                        property.location,
+                        property.property_type,
+                        property.description_ar
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+                    const searchMatch =
+                        !search ||
+                        searchableText.includes(search);
+
+                    const price =
+                        getPriceNumber(property);
+
+                    const priceMatch =
+                        !price ||
+                        price <= maxPrice;
+
+                    return categoryMatch &&
+                        typeMatch &&
+                        searchMatch &&
+                        priceMatch;
+                });
+
+            renderProperties(filtered);
+        }
+
+        function renderProperties(properties) {
+            const grid =
+                document.getElementById(
+                    "propertiesGrid"
+                );
+
+            const noResults =
+                document.getElementById(
+                    "noResults"
+                );
+
+            document.getElementById(
+                "resultsCount"
+            ).textContent =
+                `عرض ${properties.length} عقار`;
+
+            if (!properties.length) {
+                grid.innerHTML = "";
+                noResults.classList.remove("hidden");
+                return;
+            }
+
+            noResults.classList.add("hidden");
+
+            grid.innerHTML =
+                properties
+                    .map(renderPropertyCard)
+                    .join("");
+        }
+
+        function renderPropertyCard(property) {
+            const id =
+                getPropertyId(property);
+
+            const title =
+                getTitle(property);
+
+            const images =
+                getImages(property);
+
+            const image =
+                images[0] || "";
+
+            const favorite =
+                isFavorite(property);
+
+            const propertyType =
+                normalizeType(
+                    property.property_type
+                ) || "عقار";
+
+            const whatsappText =
+                encodeURIComponent(
+                    `مرحباً مكتب علام، أهتم بالعقار كود ${property.property_code || ""}: ${title} - ${property.location || ""}`
+                );
+
+            /*
+             * عند وجود صورة: تظهر الصورة.
+             * عند عدم وجود صورة: مساحة بيضاء فقط بدون صورة أو أيقونة بيت.
+             */
+            const topArea =
+                image
+                    ? `
+                        <div class="relative h-60 overflow-hidden bg-slate-100">
+
+                            <img src="${escapeHTML(image)}"
+                                 alt="${escapeHTML(title)}"
+                                 loading="lazy"
+                                 onerror="this.style.display='none';"
+                                 class="w-full h-full object-cover">
+
+                            ${cardTopContent(property, favorite)}
+
+                        </div>
+                      `
+                    : `
+                        <div class="relative no-image-area px-8 pt-8">
+                            ${cardTopContent(property, favorite)}
+                        </div>
+                      `;
+
+            return `
+                <article class="property-card bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col">
+
+                    ${topArea}
+
+                    <div class="p-6 flex-1 flex flex-col">
+
+                        <span class="text-sm font-bold text-[#b9823c] mb-2">
+                            ${escapeHTML(
+                                property.location ||
+                                "المحلة الكبرى"
+                            )}
+                        </span>
+
+                        <h3 class="text-xl font-extrabold text-brand-dark mb-5 line-clamp-2">
+                            ${escapeHTML(title)}
+                        </h3>
+
+                        <div class="grid grid-cols-4 gap-2 py-5 border-y border-slate-100 text-center text-slate-600 mb-6">
+
+                            <div>
+                                <i class="fa-solid fa-bed text-[#c08435] text-xl block mb-2"></i>
+                                <span class="text-sm">
+                                    ${escapeHTML(property.rooms || "-")}
+                                    غرف
+                                </span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-bath text-[#c08435] text-xl block mb-2"></i>
+                                <span class="text-sm">
+                                    ${escapeHTML(property.bathrooms || "-")}
+                                    حمام
+                                </span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-vector-square text-[#c08435] text-xl block mb-2"></i>
+                                <span class="text-sm">
+                                    ${escapeHTML(property.area || "-")}
+                                    م²
+                                </span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-building text-[#c08435] text-xl block mb-2"></i>
+                                <span class="text-sm">
+                                    دور ${escapeHTML(property.floor || "-")}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <p class="text-xs text-slate-500 mb-5">
+                            ${escapeHTML(propertyType)}
+                        </p>
+
+                        ${
+                            property.description_ar
+                                ? `
+                                    <p class="text-xs text-slate-500 leading-6 mb-5 line-clamp-2">
+                                        ${escapeHTML(
+                                            property.description_ar
+                                        )}
+                                    </p>
+                                  `
+                                : ""
+                        }
+
+                        <div class="mt-auto flex items-end justify-between gap-3">
+
+                            <div>
+                                ${
+                                    property.price_note
+                                        ? `
+                                            <span class="text-xs text-slate-400 block mb-1">
+                                                ${escapeHTML(
+                                                    property.price_note
+                                                )}
+                                            </span>
+                                          `
+                                        : ""
+                                }
+
+                                <strong class="text-xl font-extrabold text-brand-dark">
+                                    ${formatPrice(property)}
+                                </strong>
+                            </div>
+
+                            <a href="https://wa.me/${primaryPhone}?text=${whatsappText}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="bg-[#4aa477] hover:bg-[#378b62] text-white px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 shrink-0">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                واتساب
+                            </a>
+
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function cardTopContent(property, favorite) {
+            const id =
+                getPropertyId(property);
+
+            return `
+                <div class="absolute top-6 right-6 bg-brand-dark text-amber-300 px-4 py-2 rounded-full font-bold text-lg shadow-sm z-10">
+                    ${escapeHTML(
+                        property.property_code ||
+                        "بدون كود"
+                    )}
+                    <span class="text-white">#</span>
+                </div>
+
+                <button onclick="toggleFavorite('${escapeHTML(id)}')"
+                        aria-label="إضافة إلى المفضلة"
+                        class="absolute top-6 left-6 w-12 h-12 rounded-full bg-slate-100 hover:bg-red-50 flex items-center justify-center shadow-sm transition z-10">
+
+                    <i class="${favorite ? "fa-solid text-red-500" : "fa-regular text-slate-700"} fa-heart text-2xl"></i>
+                </button>
+
+                <span class="absolute top-[84px] left-6 bg-slate-100 text-slate-700 px-4 py-2 rounded-xl font-bold text-sm z-10">
+                    ${escapeHTML(
+                        property.status ||
+                        "متاح"
+                    )}
+                </span>
+            `;
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+
+            const name =
+                document.getElementById(
+                    "contactName"
+                ).value.trim();
+
+            const phone =
+                document.getElementById(
+                    "contactPhone"
+                ).value.trim();
+
+            const message =
+                document.getElementById(
+                    "contactMessage"
+                ).value.trim();
+
+            const whatsappText =
+                encodeURIComponent(
+                    `مرحباً مكتب علام، أنا ${name}، هاتفي ${phone}.
+
+الاستفسار:
+${message}`
+                );
+
+            window.open(
+                `https://wa.me/${primaryPhone}?text=${whatsappText}`,
+                "_blank",
+                "noopener,noreferrer"
+            );
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async () => {
+                updateFavoriteCounters();
+                setPriceSettings("all");
+                await loadProperties();
+
+                supabaseClient
+                    .channel("properties-public-changes")
+                    .on(
+                        "postgres_changes",
+                        {
+                            event: "*",
+                            schema: "public",
+                            table: "properties"
+                        },
+                        () => loadProperties()
+                    )
+                    .subscribe();
+            }
+        );
+    </script>
+
+</body>
+</html>
