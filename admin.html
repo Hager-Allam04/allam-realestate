@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>لوحة التحكم - مكتب علام للعقارات</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --gold: #b8955a;
+            --gold-dark: #9c7c47;
+            --dark: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #222;
+            font-family: Arial, Tahoma, sans-serif;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 18px 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, .12);
+        }
+
+        nav > div {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        nav h1 {
+            margin: 0 0 5px;
+            font-size: 25px;
+        }
+
+        nav span {
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+        }
+
+        .admin-container h2,
+        .section-title {
+            color: var(--gold);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 12px;
+            margin: 0 0 25px;
+            font-size: 27px;
+        }
+
+        .section-title {
+            margin-top: 45px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(184, 149, 90, .14);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .form-grid.three {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+            line-height: 1.7;
+        }
+
+        .private-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fffbeb;
+            border: 1px solid #ead9b5;
+            border-right: 5px solid var(--gold);
+            border-radius: 12px;
+        }
+
+        .private-section h3 {
+            margin: 0 0 8px;
+            color: var(--gold-dark);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        button:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .btn {
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .btn-save {
+            color: white;
+            background: var(--gold);
+        }
+
+        .btn-save:hover {
+            background: var(--gold-dark);
+        }
+
+        .btn-cancel {
+            color: white;
+            background: #6b7280;
+            display: none;
+        }
+
+        .btn-edit {
+            color: white;
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            color: white;
+            background: #dc2626;
+        }
+
+        .btn-logout {
+            color: white;
+            background: #374151;
+            float: left;
+            padding: 8px 13px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        #successMessage,
+        #errorMessage {
+            display: none;
+            padding: 14px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #successMessage {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        #errorMessage {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .property-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            background: #fff;
+        }
+
+        .property-card h3 {
+            margin: 0 0 10px;
+            color: #111827;
+        }
+
+        .property-code {
+            color: var(--gold-dark);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .property-info {
+            color: #4b5563;
+            line-height: 2;
+            margin-bottom: 14px;
+        }
+
+        .private-info {
+            padding: 12px;
+            background: #fffbeb;
+            border: 1px solid #ead9b5;
+            border-radius: 9px;
+            color: #4b5563;
+            line-height: 2;
+            margin-bottom: 15px;
+        }
+
+        .property-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .property-buttons .btn {
+            padding: 9px 14px;
+            font-size: 14px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            border: 1px dashed #cbd5e1;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .image-file-input {
+            width: 100%;
+            padding: 14px;
+            border: 1px dashed var(--gold) !important;
+            border-radius: 10px;
+            background: #fffbeb !important;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 115px;
+            height: 95px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            background: #f3f4f6;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-label {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            left: 4px;
+            padding: 3px 4px;
+            border-radius: 5px;
+            background: rgba(17, 24, 39, .75);
+            color: white;
+            font-size: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 10px;
+            color: var(--gold-dark);
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .admin-container {
+                margin: 15px 10px;
+                padding: 18px;
+            }
+
+            .form-grid,
+            .form-grid.three {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 15px;
+            }
+
+            .admin-container h2,
+            .section-title {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div>
+            <button class="btn-logout" onclick="logoutAdmin()">
+                خروج
+            </button>
+
+            <h1>مكتب علام</h1>
+            <span>لوحة التحكم الإدارية</span>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+
+        <h2 id="formTitle">
+            إضافة عقار جديد
+        </h2>
+
+        <div id="successMessage"></div>
+        <div id="errorMessage"></div>
+
+        <form id="propertyForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="propType">
+                        نوع العقار *
+                    </label>
+
+                    <select id="propType" required>
+                        <option value="شقة سكنية">شقة سكنية</option>
+                        <option value="شقة إدارية">شقة إدارية</option>
+                        <option value="محل تجاري">محل تجاري</option>
+                        <option value="أرض">أرض</option>
+                        <option value="مصنع / هنجر / مخزن">
+                            مصنع / هنجر / مخزن
+                        </option>
+                        <option value="منزل">منزل</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="propStatus">
+                        حالة العقار *
+                    </label>
+
+                    <select id="propStatus" required>
+                        <option value="للبيع">للبيع</option>
+                        <option value="للإيجار">للإيجار</option>
+                        <option value="تم البيع">تم البيع</option>
+                        <option value="تم التأجير">تم التأجير</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="propLocation">
+                    المكان أو المنطقة *
+                </label>
+
+                <input id="propLocation"
+                       type="text"
+                       required
+                       placeholder="مثال: شارع شكري القوتلي، بجوار لطفي للأحذية">
+
+                <div class="note">
+                    اكتبي أي مكان أو شارع أو عنوان بالتفصيل.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="propTitle">
+                    عنوان العقار *
+                </label>
+
+                <input id="propTitle"
+                       type="text"
+                       required
+                       placeholder="مثال: شقة إدارية مميزة للاستثمار">
+            </div>
+
+            <div class="form-grid three">
+
+                <div class="form-group">
+                    <label for="propPrice">
+                        السعر
+                    </label>
+
+                    <input id="propPrice"
+                           type="number"
+                           min="0"
+                           placeholder="مثال: 12000">
+                </div>
+
+                <div class="form-group">
+                    <label for="propPriceType">
+                        طريقة عرض السعر
+                    </label>
+
+                    <select id="propPriceType">
+                        <option value="total">
+                            سعر العقار بالكامل
+                        </option>
+
+                        <option value="meter">
+                            سعر المتر
+                        </option>
+
+                        <option value="monthly">
+                            سعر شهري
+                        </option>
+
+                        <option value="yearly">
+                            سعر سنوي
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="propPriceNote">
+                        ملاحظة السعر
+                    </label>
+
+                    <input id="propPriceNote"
+                           type="text"
+                           placeholder="قابل للتفاوض">
+                </div>
+
+            </div>
+
+            <div class="form-grid three">
+
+                <div class="form-group">
+                    <label for="propArea">
+                        المساحة بالمتر
+                    </label>
+
+                    <input id="propArea"
+                           type="number"
+                           min="0"
+                           placeholder="مثال: 140">
+                </div>
+
+                <div class="form-group">
+                    <label for="propRooms">
+                        عدد الغرف
+                    </label>
+
+                    <input id="propRooms"
+                           type="number"
+                           min="0"
+                           placeholder="مثال: 4">
+                </div>
+
+                <div class="form-group">
+                    <label for="propBathrooms">
+                        عدد الحمامات
+                    </label>
+
+                    <input id="propBathrooms"
+                           type="number"
+                           min="0"
+                           placeholder="مثال: 1">
+                </div>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="propFloor">
+                        الدور
+                    </label>
+
+                    <input id="propFloor"
+                           type="text"
+                           placeholder="مثال: الثاني">
+                </div>
+
+                <div class="form-group">
+                    <label for="propFinishing">
+                        التشطيب
+                    </label>
+
+                    <select id="propFinishing">
+                        <option value="">
+                            اختر مستوى التشطيب
+                        </option>
+
+                        <option value="بدون تشطيب">
+                            بدون تشطيب
+                        </option>
+
+                        <option value="على الطوب الأحمر">
+                            على الطوب الأحمر
+                        </option>
+
+                        <option value="نصف تشطيب">
+                            نصف تشطيب
+                        </option>
+
+                        <option value="تشطيب كامل">
+                            تشطيب كامل
+                        </option>
+
+                        <option value="تشطيب سوبر لوكس">
+                            تشطيب سوبر لوكس
+                        </option>
+
+                        <option value="تشطيب فاخر">
+                            تشطيب فاخر
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- رفع الصور -->
+            <div class="form-group">
+
+                <label for="propertyImageFiles">
+                    صور العقار
+                    <span style="font-weight: normal; color: #777;">
+                        (اختياري)
+                    </span>
+                </label>
+
+                <input id="propertyImageFiles"
+                       type="file"
+                       accept="image/jpeg,image/png,image/webp,image/gif"
+                       multiple
+                       class="image-file-input">
+
+                <div class="note">
+                    يمكنكِ اختيار صورة أو أكثر مباشرة من الهاتف أو الكمبيوتر.
+                    اتركي الحقل فارغاً إذا لم توجد صور.
+                    الحد الأقصى للصورة الواحدة 8 ميجابايت.
+                </div>
+
+                <div id="imagePreview"
+                     class="image-preview">
+                </div>
+
+                <div id="uploadProgress"
+                     class="upload-progress">
+                    جاري رفع الصور...
+                </div>
+
+                <!-- روابط الصور الموجودة أو القديمة -->
+                <input id="propImages"
+                       type="hidden"
+                       value="">
+            </div>
+
+            <div class="form-group">
+                <label for="propDetails">
+                    الوصف التفصيلي
+                </label>
+
+                <textarea id="propDetails"
+                          placeholder="اكتب تفاصيل العقار هنا..."></textarea>
+            </div>
+
+            <div class="private-section">
+
+                <h3>
+                    🔒 بيانات صاحب العقار
+                </h3>
+
+                <p class="note">
+                    هذه البيانات تحفظ في جدول منفصل ولا تظهر للزائرين في الموقع.
+                </p>
+
+                <div class="form-group">
+                    <label for="ownerName">
+                        اسم صاحب العقار
+                    </label>
+
+                    <input id="ownerName"
+                           type="text"
+                           placeholder="اسم المالك">
+                </div>
+
+                <div class="form-group">
+                    <label for="ownerPhone">
+                        رقم صاحب العقار
+                    </label>
+
+                    <input id="ownerPhone"
+                           type="tel"
+                           placeholder="01xxxxxxxxx">
+                </div>
+
+                <div class="form-group">
+                    <label for="internalNotes">
+                        ملاحظات داخلية
+                    </label>
+
+                    <textarea id="internalNotes"
+                              placeholder="ملاحظات خاصة بالمكتب"></textarea>
+                </div>
+
+            </div>
+
+            <div class="actions">
+                <button id="saveButton"
+                        type="submit"
+                        class="btn btn-save">
+                    حفظ ونشر العقار
+                </button>
+
+                <button id="cancelButton"
+                        type="button"
+                        class="btn btn-cancel"
+                        onclick="resetForm()">
+                    إلغاء التعديل
+                </button>
+            </div>
+
+        </form>
+
+        <h2 class="section-title">
+            العقارات المسجلة
+        </h2>
+
+        <div id="propertiesList">
+            <div class="empty">
+                جاري تحميل العقارات...
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const SUPABASE_URL =
+            "https://pqralzsrhiizmjwzrnwb.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_VeFVHO_UC_BynC1J-WONiA_tGk3gPnM";
+
+        const STORAGE_BUCKET =
+            "property-images";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+        let editingPropertyId = null;
+        let loadedProperties = [];
+
+        const imageFilesInput =
+            document.getElementById("propertyImageFiles");
+
+        const imagePreview =
+            document.getElementById("imagePreview");
+
+        imageFilesInput.addEventListener(
+            "change",
+            previewSelectedImages
+        );
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showSuccess(message) {
+            const box =
+                document.getElementById("successMessage");
+
+            box.textContent = message;
+            box.style.display = "block";
+
+            document.getElementById("errorMessage")
+                .style.display = "none";
+
+            setTimeout(() => {
+                box.style.display = "none";
+            }, 5000);
+        }
+
+        function showError(message) {
+            const box =
+                document.getElementById("errorMessage");
+
+            box.textContent = message;
+            box.style.display = "block";
+
+            document.getElementById("successMessage")
+                .style.display = "none";
+        }
+
+        async function checkAdminAccess() {
+            const {
+                data: { user }
+            } = await supabaseClient.auth.getUser();
+
+            if (!user) {
+                window.location.href = "admin-login.html";
+                return false;
+            }
+
+            const {
+                data: adminUser,
+                error
+            } = await supabaseClient
+                .from("admin_users")
+                .select("user_id")
+                .eq("user_id", user.id)
+                .maybeSingle();
+
+            if (error || !adminUser) {
+                await supabaseClient.auth.signOut();
+                window.location.href = "admin-login.html";
+                return false;
+            }
+
+            return true;
+        }
+
+        async function logoutAdmin() {
+            await supabaseClient.auth.signOut();
+            window.location.href = "admin-login.html";
+        }
+
+        function getFormValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value.trim() : "";
+        }
+
+        function formatPrice(property) {
+            if (
+                property.price === null ||
+                property.price === undefined ||
+                property.price === ""
+            ) {
+                return "السعر عند التواصل";
+            }
+
+            const price =
+                Number(property.price).toLocaleString("ar-EG");
+
+            let suffix = "جنيه";
+
+            if (property.price_type === "meter") {
+                suffix = "جنيه / م²";
+            } else if (property.price_type === "monthly") {
+                suffix = "جنيه / شهر";
+            } else if (property.price_type === "yearly") {
+                suffix = "جنيه / سنة";
+            }
+
+            const note =
+                property.price_note
+                    ? ` - ${property.price_note}`
+                    : "";
+
+            return `${price} ${suffix}${note}`;
+        }
+
+        function getPropertyImages(value) {
+            if (!value) {
+                return [];
+            }
+
+            if (Array.isArray(value)) {
+                return value
+                    .map(image => String(image).trim())
+                    .filter(Boolean);
+            }
+
+            return String(value)
+                .split(",")
+                .map(image => image.trim())
+                .filter(Boolean);
+        }
+
+        function createPreviewItem(url, label = "صورة") {
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "image-preview-item";
+
+            const image =
+                document.createElement("img");
+
+            image.src = url;
+            image.alt = label;
+
+            const caption =
+                document.createElement("span");
+
+            caption.className =
+                "image-preview-label";
+
+            caption.textContent =
+                label;
+
+            wrapper.appendChild(image);
+            wrapper.appendChild(caption);
+
+            imagePreview.appendChild(wrapper);
+        }
+
+        function previewSelectedImages() {
+            imagePreview.innerHTML = "";
+
+            const oldImages =
+                getPropertyImages(
+                    document.getElementById("propImages").value
+                );
+
+            oldImages.forEach((url, index) => {
+                createPreviewItem(
+                    url,
+                    `صورة قديمة ${index + 1}`
+                );
+            });
+
+            const files =
+                Array.from(imageFilesInput.files || []);
+
+            files.forEach((file, index) => {
+                if (!file.type.startsWith("image/")) {
+                    return;
+                }
+
+                const reader =
+                    new FileReader();
+
+                reader.onload = event => {
+                    createPreviewItem(
+                        event.target.result,
+                        `صورة جديدة ${index + 1}`
+                    );
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadPropertyImages(propertyId) {
+            const files =
+                Array.from(imageFilesInput.files || []);
+
+            if (!files.length) {
+                return [];
+            }
+
+            const uploadedUrls = [];
+
+            for (let index = 0; index < files.length; index++) {
+                const file = files[index];
+
+                if (!file.type.startsWith("image/")) {
+                    throw new Error(
+                        `الملف ${file.name} ليس صورة صحيحة.`
+                    );
+                }
+
+                if (file.size > 8 * 1024 * 1024) {
+                    throw new Error(
+                        `حجم الصورة ${file.name} أكبر من 8 ميجابايت.`
+                    );
+                }
+
+                const extension =
+                    file.name
+                        .split(".")
+                        .pop()
+                        .toLowerCase();
+
+                const allowedExtensions = [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp",
+                    "gif"
+                ];
+
+                const safeExtension =
+                    allowedExtensions.includes(extension)
+                        ? extension
+                        : "jpg";
+
+                const uniquePart =
+                    window.crypto &&
+                    typeof window.crypto.randomUUID === "function"
+                        ? window.crypto.randomUUID()
+                        : `${Date.now()}-${index}`;
+
+                const filePath =
+                    `${propertyId}/${uniquePart}.${safeExtension}`;
+
+                document.getElementById("uploadProgress")
+                    .textContent =
+                    `جاري رفع الصورة ${index + 1} من ${files.length}...`;
+
+                const {
+                    error: uploadError
+                } = await supabaseClient
+                    .storage
+                    .from(STORAGE_BUCKET)
+                    .upload(filePath, file, {
+                        cacheControl: "3600",
+                        upsert: false,
+                        contentType: file.type
+                    });
+
+                if (uploadError) {
+                    throw uploadError;
+                }
+
+                const {
+                    data: publicUrlData
+                } = supabaseClient
+                    .storage
+                    .from(STORAGE_BUCKET)
+                    .getPublicUrl(filePath);
+
+                if (!publicUrlData?.publicUrl) {
+                    throw new Error(
+                        "تعذر الحصول على رابط الصورة."
+                    );
+                }
+
+                uploadedUrls.push(
+                    publicUrlData.publicUrl
+                );
+            }
+
+            return uploadedUrls;
+        }
+
+        async function getPrivateData(propertyId) {
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("property_private")
+                .select(
+                    "property_id, owner_name, owner_phone, internal_notes"
+                )
+                .eq("property_id", propertyId)
+                .maybeSingle();
+
+            if (error) {
+                console.error(
+                    "Private data error:",
+                    error
+                );
+
+                return null;
+            }
+
+            return data;
+        }
+
+        async function loadProperties() {
+            const container =
+                document.getElementById("propertiesList");
+
+            container.innerHTML =
+                '<div class="empty">جاري تحميل العقارات...</div>';
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("properties")
+                .select("*")
+                .order(
+                    "updated_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+            if (error) {
+                console.error(error);
+
+                container.innerHTML =
+                    '<div class="empty">حدث خطأ أثناء تحميل العقارات.</div>';
+
+                return;
+            }
+
+            loadedProperties =
+                data || [];
+
+            if (!loadedProperties.length) {
+                container.innerHTML =
+                    '<div class="empty">لا توجد عقارات مسجلة حتى الآن.</div>';
+
+                return;
+            }
+
+            const privateEntries =
+                await Promise.all(
+                    loadedProperties.map(async property => {
+                        const privateData =
+                            await getPrivateData(
+                                property.property_id
+                            );
+
+                        return [
+                            String(property.property_id),
+                            privateData
+                        ];
+                    })
+                );
+
+            const privateMap =
+                new Map(privateEntries);
+
+            container.innerHTML =
+                loadedProperties
+                    .map(property => {
+                        const privateData =
+                            privateMap.get(
+                                String(property.property_id)
+                            ) || {};
+
+                        const title =
+                            property.title_ar ||
+                            `${property.property_type || "عقار"} في ${property.location || ""}`;
+
+                        const images =
+                            getPropertyImages(
+                                property.images
+                            );
+
+                        return `
+                            <article class="property-card">
+
+                                <div class="property-code">
+                                    ${escapeHTML(
+                                        property.property_code ||
+                                        "بدون كود"
+                                    )}
+                                </div>
+
+                                <h3>
+                                    ${escapeHTML(title)}
+                                </h3>
+
+                                <div class="property-info">
+                                    الحالة:
+                                    ${escapeHTML(
+                                        property.status ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    النوع:
+                                    ${escapeHTML(
+                                        property.property_type ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    المكان:
+                                    ${escapeHTML(
+                                        property.location ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    السعر:
+                                    ${escapeHTML(
+                                        formatPrice(property)
+                                    )}
+
+                                    <br>
+
+                                    المساحة:
+                                    ${escapeHTML(
+                                        property.area ||
+                                        "غير محددة"
+                                    )}
+                                    م²
+
+                                    <br>
+
+                                    الغرف:
+                                    ${escapeHTML(
+                                        property.rooms ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    الحمامات:
+                                    ${escapeHTML(
+                                        property.bathrooms ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    الدور:
+                                    ${escapeHTML(
+                                        property.floor ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    التشطيب:
+                                    ${escapeHTML(
+                                        property.finish ||
+                                        "غير محدد"
+                                    )}
+
+                                    <br>
+
+                                    الصور:
+                                    ${images.length
+                                        ? `${images.length} صورة`
+                                        : "بدون صور"}
+                                </div>
+
+                                <div class="private-info">
+                                    <strong>
+                                        🔒 البيانات الداخلية
+                                    </strong>
+
+                                    <br>
+
+                                    اسم المالك:
+                                    ${escapeHTML(
+                                        privateData.owner_name ||
+                                        "غير مسجل"
+                                    )}
+
+                                    <br>
+
+                                    رقم المالك:
+                                    ${escapeHTML(
+                                        privateData.owner_phone ||
+                                        "غير مسجل"
+                                    )}
+
+                                    <br>
+
+                                    ملاحظات:
+                                    ${escapeHTML(
+                                        privateData.internal_notes ||
+                                        "لا توجد ملاحظات"
+                                    )}
+                                </div>
+
+                                <div class="property-buttons">
+                                    <button
+                                        class="btn btn-edit"
+                                        onclick="editProperty('${escapeHTML(
+                                            property.property_id
+                                        )}')">
+                                        تعديل
+                                    </button>
+
+                                    <button
+                                        class="btn btn-delete"
+                                        onclick="deleteProperty('${escapeHTML(
+                                            property.property_id
+                                        )}')">
+                                        حذف
+                                    </button>
+                                </div>
+
+                            </article>
+                        `;
+                    })
+                    .join("");
+        }
+
+        function getPropertyData(images) {
+            const type =
+                getFormValue("propType");
+
+            const status =
+                getFormValue("propStatus");
+
+            const location =
+                getFormValue("propLocation");
+
+            const title =
+                getFormValue("propTitle");
+
+            const price =
+                getFormValue("propPrice");
+
+            const priceType =
+                getFormValue("propPriceType");
+
+            const priceNote =
+                getFormValue("propPriceNote");
+
+            const area =
+                getFormValue("propArea");
+
+            const rooms =
+                getFormValue("propRooms");
+
+            const bathrooms =
+                getFormValue("propBathrooms");
+
+            const floor =
+                getFormValue("propFloor");
+
+            const finish =
+                getFormValue("propFinishing");
+
+            const details =
+                getFormValue("propDetails");
+
+            return {
+                property_type: type,
+                status,
+                location,
+                title_ar: title,
+                description_ar:
+                    details ||
+                    "التفاصيل متوفرة عند الاتصال بمكتب علام.",
+                price: price || "",
+                price_type: priceType,
+                price_note: priceNote,
+                area: area || "",
+                rooms: rooms || "",
+                bathrooms: bathrooms || "",
+                floor: floor || "",
+                finish,
+                images: images.join(","),
+                updated_at: new Date().toISOString()
+            };
+        }
+
+        async function savePrivateData(propertyId) {
+            const privateData = {
+                property_id: String(propertyId),
+                owner_name: getFormValue("ownerName"),
+                owner_phone: getFormValue("ownerPhone"),
+                internal_notes: getFormValue("internalNotes")
+            };
+
+            const {
+                error
+            } = await supabaseClient
+                .from("property_private")
+                .upsert(
+                    privateData,
+                    {
+                        onConflict: "property_id"
+                    }
+                );
+
+            return error;
+        }
+
+        async function generateNextCode() {
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("properties")
+                .select("property_code")
+                .like("property_code", "P%");
+
+            if (error) {
+                throw error;
+            }
+
+            let highestNumber = 0;
+
+            (data || []).forEach(property => {
+                const number =
+                    parseInt(
+                        String(
+                            property.property_code || ""
+                        ).replace(/^P/i, ""),
+                        10
+                    );
+
+                if (!Number.isNaN(number)) {
+                    highestNumber =
+                        Math.max(
+                            highestNumber,
+                            number
+                        );
+                }
+            });
+
+            return `P${String(
+                highestNumber + 1
+            ).padStart(3, "0")}`;
+        }
+
+        document
+            .getElementById("propertyForm")
+            .addEventListener(
+                "submit",
+                async event => {
+                    event.preventDefault();
+
+                    const saveButton =
+                        document.getElementById("saveButton");
+
+                    const progress =
+                        document.getElementById("uploadProgress");
+
+                    saveButton.disabled = true;
+                    saveButton.textContent =
+                        "جاري الحفظ...";
+
+                    progress.style.display =
+                        "block";
+
+                    try {
+                        let propertyId =
+                            editingPropertyId;
+
+                        if (!propertyId) {
+                            propertyId =
+                                window.crypto &&
+                                typeof window.crypto.randomUUID ===
+                                "function"
+                                    ? window.crypto.randomUUID()
+                                    : String(Date.now());
+                        }
+
+                        const oldImages =
+                            getPropertyImages(
+                                document.getElementById(
+                                    "propImages"
+                                ).value
+                            );
+
+                        const newImages =
+                            await uploadPropertyImages(
+                                propertyId
+                            );
+
+                        const allImages = [
+                            ...oldImages,
+                            ...newImages
+                        ];
+
+                        const propertyData =
+                            getPropertyData(allImages);
+
+                        if (editingPropertyId) {
+                            const {
+                                error
+                            } = await supabaseClient
+                                .from("properties")
+                                .update(propertyData)
+                                .eq(
+                                    "property_id",
+                                    editingPropertyId
+                                );
+
+                            if (error) {
+                                throw error;
+                            }
+
+                            const privateError =
+                                await savePrivateData(
+                                    editingPropertyId
+                                );
+
+                            if (privateError) {
+                                throw privateError;
+                            }
+
+                            showSuccess(
+                                "تم تعديل العقار بنجاح."
+                            );
+                        } else {
+                            const propertyCode =
+                                await generateNextCode();
+
+                            const {
+                                error
+                            } = await supabaseClient
+                                .from("properties")
+                                .insert({
+                                    ...propertyData,
+                                    property_id: propertyId,
+                                    property_code: propertyCode
+                                });
+
+                            if (error) {
+                                throw error;
+                            }
+
+                            const privateError =
+                                await savePrivateData(
+                                    propertyId
+                                );
+
+                            if (privateError) {
+                                throw privateError;
+                            }
+
+                            showSuccess(
+                                "تم إضافة العقار ونشره بنجاح."
+                            );
+                        }
+
+                        resetForm();
+                        await loadProperties();
+
+                    } catch (error) {
+                        console.error(error);
+
+                        showError(
+                            "حدث خطأ أثناء الحفظ: " +
+                            (
+                                error.message ||
+                                "خطأ غير معروف"
+                            )
+                        );
+                    } finally {
+                        saveButton.disabled = false;
+                        saveButton.textContent =
+                            editingPropertyId
+                                ? "حفظ التعديلات"
+                                : "حفظ ونشر العقار";
+
+                        progress.style.display =
+                            "none";
+                    }
+                }
+            );
+
+        async function editProperty(id) {
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("properties")
+                .select("*")
+                .eq("property_id", id)
+                .maybeSingle();
+
+            if (error || !data) {
+                showError(
+                    "لم نتمكن من العثور على العقار."
+                );
+
+                return;
+            }
+
+            const privateData =
+                await getPrivateData(id) || {};
+
+            editingPropertyId =
+                data.property_id;
+
+            document.getElementById("formTitle")
+                .textContent =
+                "تعديل العقار";
+
+            document.getElementById("propType")
+                .value =
+                data.property_type ||
+                "شقة سكنية";
+
+            document.getElementById("propStatus")
+                .value =
+                data.status ||
+                "للبيع";
+
+            document.getElementById("propLocation")
+                .value =
+                data.location ||
+                "";
+
+            document.getElementById("propTitle")
+                .value =
+                data.title_ar ||
+                "";
+
+            document.getElementById("propPrice")
+                .value =
+                data.price ||
+                "";
+
+            document.getElementById("propPriceType")
+                .value =
+                data.price_type ||
+                "total";
+
+            document.getElementById("propPriceNote")
+                .value =
+                data.price_note ||
+                "";
+
+            document.getElementById("propArea")
+                .value =
+                data.area ||
+                "";
+
+            document.getElementById("propRooms")
+                .value =
+                data.rooms ||
+                "";
+
+            document.getElementById("propBathrooms")
+                .value =
+                data.bathrooms ||
+                "";
+
+            document.getElementById("propFloor")
+                .value =
+                data.floor ||
+                "";
+
+            document.getElementById("propFinishing")
+                .value =
+                data.finish ||
+                "";
+
+            document.getElementById("propImages")
+                .value =
+                data.images ||
+                "";
+
+            document.getElementById("propDetails")
+                .value =
+                data.description_ar ||
+                "";
+
+            document.getElementById("ownerName")
+                .value =
+                privateData.owner_name ||
+                "";
+
+            document.getElementById("ownerPhone")
+                .value =
+                privateData.owner_phone ||
+                "";
+
+            document.getElementById("internalNotes")
+                .value =
+                privateData.internal_notes ||
+                "";
+
+            imageFilesInput.value =
+                "";
+
+            imagePreview.innerHTML =
+                "";
+
+            const oldImages =
+                getPropertyImages(
+                    data.images
+                );
+
+            oldImages.forEach((url, index) => {
+                createPreviewItem(
+                    url,
+                    `صورة قديمة ${index + 1}`
+                );
+            });
+
+            document.getElementById("saveButton")
+                .textContent =
+                "حفظ التعديلات";
+
+            document.getElementById("cancelButton")
+                .style.display =
+                "inline-block";
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        async function deleteProperty(id) {
+            if (
+                !confirm(
+                    "هل أنتِ متأكدة من حذف هذا العقار؟"
+                )
+            ) {
+                return;
+            }
+
+            try {
+                const {
+                    error: privateError
+                } = await supabaseClient
+                    .from("property_private")
+                    .delete()
+                    .eq(
+                        "property_id",
+                        id
+                    );
+
+                if (privateError) {
+                    throw privateError;
+                }
+
+                const {
+                    error
+                } = await supabaseClient
+                    .from("properties")
+                    .delete()
+                    .eq(
+                        "property_id",
+                        id
+                    );
+
+                if (error) {
+                    throw error;
+                }
+
+                showSuccess(
+                    "تم حذف العقار بنجاح."
+                );
+
+                await loadProperties();
+
+            } catch (error) {
+                console.error(error);
+
+                showError(
+                    "حدث خطأ أثناء الحذف: " +
+                    (
+                        error.message ||
+                        "خطأ غير معروف"
+                    )
+                );
+            }
+        }
+
+        function resetForm() {
+            editingPropertyId =
+                null;
+
+            document.getElementById("propertyForm")
+                .reset();
+
+            document.getElementById("formTitle")
+                .textContent =
+                "إضافة عقار جديد";
+
+            document.getElementById("saveButton")
+                .textContent =
+                "حفظ ونشر العقار";
+
+            document.getElementById("cancelButton")
+                .style.display =
+                "none";
+
+            document.getElementById("propType")
+                .value =
+                "شقة سكنية";
+
+            document.getElementById("propStatus")
+                .value =
+                "للبيع";
+
+            document.getElementById("propPriceType")
+                .value =
+                "total";
+
+            document.getElementById("propImages")
+                .value =
+                "";
+
+            imageFilesInput.value =
+                "";
+
+            imagePreview.innerHTML =
+                "";
+
+            document.getElementById("uploadProgress")
+                .style.display =
+                "none";
+        }
+
+        async function startAdmin() {
+            const allowed =
+                await checkAdminAccess();
+
+            if (!allowed) {
+                return;
+            }
+
+            await loadProperties();
+        }
+
+        startAdmin();
+    </script>
+
+</body>
+
+</html>
