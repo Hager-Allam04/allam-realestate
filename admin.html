@@ -518,6 +518,7 @@
                             aria-label="وحدة المساحة">
                         <option value="sqm">متر مربع</option>
                         <option value="feddan">فدان</option>
+                        <option value="qirat">قيراط</option>
                     </select>
                 </div>
 
@@ -914,7 +915,15 @@
                 property.area ||
                 "غير محددة";
 
-            return `${area} ${property.property_type === "أرض" ? "فدان" : "م²"}`;
+            let unit = "م²";
+
+            if (property.property_type === "أرض") {
+                unit = property.area_unit === "qirat"
+                    ? "قيراط"
+                    : "فدان";
+            }
+
+            return `${area} ${unit}`;
         }
 
         function getPropertyImages(value) {
@@ -1360,6 +1369,9 @@
             const area =
                 getFormValue("propArea");
 
+            const areaUnit =
+                getFormValue("propAreaUnit");
+
             const rooms =
                 getFormValue("propRooms");
 
@@ -1387,6 +1399,7 @@
                 price_type: priceType,
                 price_note: priceNote,
                 area: area || "",
+                area_unit: areaUnit,
                 rooms: rooms || "",
                 bathrooms: bathrooms || "",
                 floor: floor || "",
