@@ -82,6 +82,92 @@
         .property-card {
             min-height: 650px;
         }
+
+        .reviews-section {
+            padding: 5rem 1rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .reviews-section .container {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            margin-bottom: 1rem;
+            color: #111827;
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: .75rem;
+            margin-bottom: 2.5rem;
+            color: #64748b;
+        }
+
+        .rating-score {
+            color: #111827;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .rating-stars,
+        .review-stars {
+            color: #d97706;
+            letter-spacing: .1rem;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+
+        .review-card {
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, .05);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-name {
+            color: #1f2937;
+            font-weight: 800;
+        }
+
+        .review-text {
+            margin: 0;
+            color: #475569;
+            line-height: 2;
+        }
+
+        @media (min-width: 768px) {
+            .reviews-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .reviews-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
     </style>
 </head>
 
@@ -323,6 +409,77 @@
             حدث خطأ أثناء تحميل العقارات.
         </div>
 
+    </section>
+
+    <!-- قسم التقييمات وآراء العملاء -->
+    <section id="reviews" class="reviews-section">
+        <div class="container">
+            <h2 class="section-title">آراء وتقييمات العملاء</h2>
+
+            <div class="rating-summary">
+                <span class="rating-score">4.6</span>
+                <span class="rating-stars">★★★★☆</span>
+                <span class="rating-count">(بناءً على 8 تقييمات)</span>
+            </div>
+
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذ ب. س.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">خدمة ممتازة والفريق محترف.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">د. حسام الهليس</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">مكتب سمسار عقارات المحلة الكبرى بإدارة الأستاذ محمود علام من أصدق الناس اللي شغالة في العقارات. أنا اتعاملت معاه أكثر من مرة وكان في كل مرة يوضح الصورة بكل صدق بدون أي مبالغة، كمان إنسان مش طماع وأمين. أتمنى لهم كل التوفيق.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذة س. أ.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">أحسن سمسار محترم وأمانة في المحلة.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذ أ. ك.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">أستاذ محمود بصدق وعن تجربة من الشخصيات المحترمة وإنسان هادئ لا يحب كثرة الكلام لإقناع الزبون، جزاه الله خيراً على المصداقية والأمانة والاحترام.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذ ح. أ.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">بكل صراحة تعامل راقي جداً ومصداقية ووفاء، والشكر موصول للأستاذ محمود علام.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذ ق. ع.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">بيتابعوا معاك لحد ما تستلم.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-name">أستاذ ح. ك.</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <p class="review-text">ما شاء الله تعامل وأسلوب راجل محترم.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Contact -->
@@ -653,6 +810,8 @@
 
             if (property.price_type === "meter") {
                 unit = "ج.م / م²";
+            } else if (property.price_type === "feddan") {
+                unit = "ج.م / فدان";
             } else if (property.price_type === "monthly") {
                 unit = "ج.م / شهرياً";
             } else if (property.price_type === "yearly") {
@@ -660,6 +819,14 @@
             }
 
             return `${amount} ${unit}`;
+        }
+
+        function formatArea(property) {
+            const area =
+                property.area ||
+                "-";
+
+            return `${area} ${property.property_type === "أرض" ? "فدان" : "م²"}`;
         }
 
         function updateFavoriteCounters() {
@@ -1136,8 +1303,7 @@
                             <div>
                                 <i class="fa-solid fa-vector-square text-[#c08435] text-xl block mb-2"></i>
                                 <span class="text-sm">
-                                    ${escapeHTML(property.area || "-")}
-                                    م²
+                                    ${escapeHTML(formatArea(property))}
                                 </span>
                             </div>
 
