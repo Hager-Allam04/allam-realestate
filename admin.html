@@ -331,6 +331,14 @@
             font-weight: bold;
         }
 
+        .land-only {
+            display: none;
+        }
+
+        .land-only.is-visible {
+            display: block;
+        }
+
         @media (max-width: 700px) {
             .admin-container {
                 margin: 15px 10px;
@@ -465,6 +473,12 @@
                             سعر المتر
                         </option>
 
+                        <option id="pricePerFeddanOption"
+                                value="feddan"
+                                hidden>
+                            سعر الفدان
+                        </option>
+
                         <option value="monthly">
                             سعر شهري
                         </option>
@@ -490,7 +504,7 @@
             <div class="form-grid three">
 
                 <div class="form-group">
-                    <label for="propArea">
+                    <label id="areaLabel" for="propArea">
                         المساحة بالمتر
                     </label>
 
@@ -498,6 +512,13 @@
                            type="number"
                            min="0"
                            placeholder="مثال: 140">
+
+                    <select id="propAreaUnit"
+                            class="land-only"
+                            aria-label="وحدة المساحة">
+                        <option value="sqm">متر مربع</option>
+                        <option value="feddan">فدان</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -715,10 +736,75 @@
         const imagePreview =
             document.getElementById("imagePreview");
 
+        const propTypeSelect =
+            document.getElementById("propType");
+
+        const pricePerFeddanOption =
+            document.getElementById("pricePerFeddanOption");
+
+        const areaLabel =
+            document.getElementById("areaLabel");
+
+        const areaInput =
+            document.getElementById("propArea");
+
+        const areaUnitSelect =
+            document.getElementById("propAreaUnit");
+
         imageFilesInput.addEventListener(
             "change",
             previewSelectedImages
         );
+
+        propTypeSelect.addEventListener(
+            "change",
+            updateLandFields
+        );
+
+        function updateLandFields() {
+            const isLand =
+                propTypeSelect.value === "أرض";
+
+            pricePerFeddanOption.hidden =
+                !isLand;
+
+            areaUnitSelect.classList.toggle(
+                "is-visible",
+                isLand
+            );
+
+            areaLabel.textContent =
+                isLand
+                    ? "المساحة"
+                    : "المساحة بالمتر";
+
+            areaInput.placeholder =
+                isLand
+                    ? "مثال: 2"
+                    : "مثال: 140";
+
+            if (isLand) {
+                areaUnitSelect.value = "feddan";
+
+                if (
+                    document.getElementById("propPriceType").value ===
+                    "meter"
+                ) {
+                    document.getElementById("propPriceType").value =
+                        "feddan";
+                }
+            } else {
+                areaUnitSelect.value = "sqm";
+
+                if (
+                    document.getElementById("propPriceType").value ===
+                    "feddan"
+                ) {
+                    document.getElementById("propPriceType").value =
+                        "total";
+                }
+            }
+        }
 
         function escapeHTML(value) {
             return String(value ?? "")
@@ -821,6 +907,14 @@
                     : "";
 
             return `${price} ${suffix}${note}`;
+        }
+
+        function formatArea(property) {
+            const area =
+                property.area ||
+                "غير محددة";
+
+            return `${area} ${property.property_type === "أرض" ? "فدان" : "م²"}`;
         }
 
         function getPropertyImages(value) {
@@ -1144,10 +1238,8 @@
 
                                     المساحة:
                                     ${escapeHTML(
-                                        property.area ||
-                                        "غير محددة"
+                                        formatArea(property)
                                     )}
-                                    م²
 
                                     <br>
 
@@ -1570,6 +1662,11 @@
                 data.area ||
                 "";
 
+            document.getElementById("propAreaUnit")
+                .value =
+                data.area_unit ||
+                (data.property_type === "أرض" ? "feddan" : "sqm");
+
             document.getElementById("propRooms")
                 .value =
                 data.rooms ||
@@ -1589,6 +1686,8 @@
                 .value =
                 data.finish ||
                 "";
+
+            updateLandFields();
 
             document.getElementById("propImages")
                 .value =
@@ -1735,6 +1834,10 @@
                 .value =
                 "total";
 
+            document.getElementById("propAreaUnit")
+                .value =
+                "sqm";
+
             document.getElementById("propImages")
                 .value =
                 "";
@@ -1748,9 +1851,13 @@
             document.getElementById("uploadProgress")
                 .style.display =
                 "none";
+
+            updateLandFields();
         }
 
         async function startAdmin() {
+            updateLandFields();
+
             const allowed =
                 await checkAdminAccess();
 
