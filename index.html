@@ -83,6 +83,112 @@
             min-height: 650px;
         }
 
+        .social-links-card {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #fffdf8 0%, #f8fafc 100%);
+            border: 1px solid #eadfca;
+            border-radius: 1.25rem;
+        }
+
+        .social-links-heading {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .social-links-heading-icon {
+            display: inline-flex;
+            width: 2.5rem;
+            height: 2.5rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: .8rem;
+            background: #111827;
+            color: #fbbf24;
+        }
+
+        .social-links-heading h4 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .social-links-heading p {
+            margin: .15rem 0 0;
+            color: #64748b;
+            font-size: .75rem;
+        }
+
+        .social-links-list {
+            display: grid;
+            gap: .7rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: .85rem;
+            padding: .8rem .9rem;
+            background: rgba(255, 255, 255, .88);
+            border: 1px solid #e2e8f0;
+            border-radius: .9rem;
+            color: #1f2937;
+            text-decoration: none;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+        }
+
+        .social-link-icon {
+            display: inline-flex;
+            width: 2.35rem;
+            height: 2.35rem;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            border-radius: .7rem;
+            font-size: 1.1rem;
+        }
+
+        .social-link-icon.google {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .social-link-icon.facebook {
+            background: #eaf2ff;
+            color: #1877f2;
+        }
+
+        .social-link-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .social-link-title {
+            display: block;
+            font-size: .86rem;
+            font-weight: 800;
+        }
+
+        .social-link-description {
+            display: block;
+            margin-top: .15rem;
+            color: #64748b;
+            font-size: .7rem;
+        }
+
+        .social-link-arrow {
+            color: #94a3b8;
+            font-size: .8rem;
+        }
+
         .reviews-section {
             padding: 5rem 1rem;
             background: #f8fafc;
@@ -565,6 +671,69 @@
                         <p class="font-bold leading-8">
                             المحلة الكبرى ، شكري القوتلي ، شارع تومة ، جنب لطفي للأحذية
                         </p>
+                    </div>
+
+                    <div class="social-links-card">
+                        <div class="social-links-heading">
+                            <span class="social-links-heading-icon">
+                                <i class="fa-solid fa-link"></i>
+                            </span>
+
+                            <div>
+                                <h4>تعرّفوا على مكتب علام</h4>
+                                <p>تابعونا واطّلعوا على تقييماتنا وآخر أخبارنا</p>
+                            </div>
+                        </div>
+
+                        <div class="social-links-list">
+                            <a href="https://share.google/QqK60gWNOOwWYA9tu"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="social-link">
+                                <span class="social-link-icon google">
+                                    <i class="fa-brands fa-google"></i>
+                                </span>
+
+                                <span class="social-link-copy">
+                                    <span class="social-link-title">مكتب علام على جوجل</span>
+                                    <span class="social-link-description">الموقع والتقييمات وآراء العملاء</span>
+                                </span>
+
+                                <i class="social-link-arrow fa-solid fa-arrow-up-left"></i>
+                            </a>
+
+                            <a href="https://www.facebook.com/share/g/18U2RxmL12/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="social-link">
+                                <span class="social-link-icon facebook">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </span>
+
+                                <span class="social-link-copy">
+                                    <span class="social-link-title">صفحة مكتب علام على فيسبوك</span>
+                                    <span class="social-link-description">العروض الجديدة والتحديثات</span>
+                                </span>
+
+                                <i class="social-link-arrow fa-solid fa-arrow-up-left"></i>
+                            </a>
+
+                            <a href="https://www.facebook.com/share/1DwGcEc4io/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="social-link">
+                                <span class="social-link-icon facebook">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </span>
+
+                                <span class="social-link-copy">
+                                    <span class="social-link-title">الصفحة الشخصية للأستاذ محمود علام</span>
+                                    <span class="social-link-description">تواصل مباشر مع صاحب المكتب</span>
+                                </span>
+
+                                <i class="social-link-arrow fa-solid fa-arrow-up-left"></i>
+                            </a>
+                        </div>
                     </div>
 
                 </div>
